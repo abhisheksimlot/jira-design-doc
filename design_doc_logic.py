@@ -209,15 +209,17 @@ def create_architecture_diagram_png() -> bytes:
     Creates a simple architecture diagram as a PNG (boxes + arrows) with BIGGER fonts.
     """
     # ✅ Bigger canvas + higher DPI feel
-    W, H = 2200, 1200   # was 1400x800
+    W, H = 2400, 1300   # was 1400x800
     img = Image.new("RGB", (W, H), "white")
     draw = ImageDraw.Draw(img)
 
     # ✅ Bigger fonts
+    # BIG readable fonts (works on Render if fonts are in repo)
     try:
-        font = ImageFont.truetype("arial.ttf", 34)     # was 22
-        font_b = ImageFont.truetype("arial.ttf", 42)   # was 26
-    except:
+        font = ImageFont.truetype("fonts/DejaVuSans.ttf", 34)
+        font_b = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 42)
+    except Exception:
+        # fallback (still better than default tiny)
         font = ImageFont.load_default()
         font_b = ImageFont.load_default()
 
@@ -231,7 +233,7 @@ def create_architecture_diagram_png() -> bytes:
         )
         draw.text((x1 + 28, y1 + 22), title, fill="black", font=font_b)
         if subtitle:
-            draw.text((x1 + 28, y1 + 85), subtitle, fill="black", font=font)
+            draw.text((x1 + 28, y1 + 95), subtitle, fill="black", font=font)
 
     def arrow(x1, y1, x2, y2):
         draw.line([x1, y1, x2, y2], fill="black", width=6)  # was 4
