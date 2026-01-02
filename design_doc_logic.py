@@ -206,60 +206,68 @@ def generate_design_doc_bytes(
 
 def create_architecture_diagram_png() -> bytes:
     """
-    Creates a simple architecture diagram as a PNG (boxes + arrows).
+    Creates a simple architecture diagram as a PNG (boxes + arrows) with BIGGER fonts.
     """
-    W, H = 1400, 800
+    # ✅ Bigger canvas + higher DPI feel
+    W, H = 2200, 1200   # was 1400x800
     img = Image.new("RGB", (W, H), "white")
     draw = ImageDraw.Draw(img)
 
-    # Try to load a default font (fallback to built-in if unavailable)
+    # ✅ Bigger fonts
     try:
-        font = ImageFont.truetype("arial.ttf", 22)
-        font_b = ImageFont.truetype("arial.ttf", 26)
+        font = ImageFont.truetype("arial.ttf", 34)     # was 22
+        font_b = ImageFont.truetype("arial.ttf", 42)   # was 26
     except:
         font = ImageFont.load_default()
         font_b = ImageFont.load_default()
 
     def box(x1, y1, x2, y2, title, subtitle=""):
-        draw.rounded_rectangle([x1, y1, x2, y2], radius=18, outline="black", width=3, fill="#F5F9FF")
-        draw.text((x1 + 20, y1 + 18), title, fill="black", font=font_b)
+        draw.rounded_rectangle(
+            [x1, y1, x2, y2],
+            radius=26,                 # was 18
+            outline="black",
+            width=4,                   # was 3
+            fill="#F5F9FF"
+        )
+        draw.text((x1 + 28, y1 + 22), title, fill="black", font=font_b)
         if subtitle:
-            draw.text((x1 + 20, y1 + 60), subtitle, fill="black", font=font)
+            draw.text((x1 + 28, y1 + 85), subtitle, fill="black", font=font)
 
     def arrow(x1, y1, x2, y2):
-        draw.line([x1, y1, x2, y2], fill="black", width=4)
-        # arrow head
+        draw.line([x1, y1, x2, y2], fill="black", width=6)  # was 4
+
+        # Bigger arrow head
         import math
         ang = math.atan2(y2 - y1, x2 - x1)
-        L = 18
+        L = 30  # was 18
         a1 = ang + math.radians(150)
         a2 = ang - math.radians(150)
-        draw.line([x2, y2, x2 + L * math.cos(a1), y2 + L * math.sin(a1)], fill="black", width=4)
-        draw.line([x2, y2, x2 + L * math.cos(a2), y2 + L * math.sin(a2)], fill="black", width=4)
+        draw.line([x2, y2, x2 + L * math.cos(a1), y2 + L * math.sin(a1)], fill="black", width=6)
+        draw.line([x2, y2, x2 + L * math.cos(a2), y2 + L * math.sin(a2)], fill="black", width=6)
 
-    # Boxes (edit labels as you like)
-    box(80, 80, 440, 200, "Business User", "Browser / Teams")
-    box(520, 80, 920, 200, "Power Apps", "Canvas / Model-driven")
-    box(980, 80, 1320, 200, "Power BI", "Embedded (optional)")
+    # ✅ Reposition boxes to fit the bigger canvas
+    box(120, 120, 700, 300, "Business User", "Browser / Teams")
+    box(820, 120, 1450, 300, "Power Apps", "Canvas / Model-driven")
+    box(1550, 120, 2100, 300, "Power BI", "Embedded (optional)")
 
-    box(520, 280, 920, 410, "Power Automate", "Cloud flows / approvals")
-    box(520, 500, 920, 640, "Dataverse", "Core data store")
+    box(820, 430, 1450, 630, "Power Automate", "Cloud flows / approvals")
+    box(820, 760, 1450, 980, "Dataverse", "Core data store")
 
-    box(80, 500, 440, 640, "SharePoint / Files", "Uploads / Templates")
-    box(980, 280, 1320, 410, "External Systems", "APIs / Mainframe / Email")
-    box(980, 500, 1320, 640, "Azure OpenAI", "Requirements / Summaries")
+    box(120, 760, 700, 980, "SharePoint / Files", "Uploads / Templates")
+    box(1550, 430, 2100, 630, "External Systems", "APIs / Mainframe / Email")
+    box(1550, 760, 2100, 980, "Azure OpenAI", "Requirements / Summaries")
 
-    # Arrows
-    arrow(440, 140, 520, 140)     # user -> apps
-    arrow(720, 200, 720, 280)     # apps -> flows
-    arrow(720, 410, 720, 500)     # flows -> dataverse
-    arrow(440, 570, 520, 570)     # sharepoint -> dataverse
-    arrow(920, 340, 980, 340)     # flows -> external
-    arrow(920, 570, 980, 570)     # dataverse -> openai
-    arrow(920, 140, 980, 140)     # apps -> powerbi
+    # Arrows (adjusted)
+    arrow(700, 210, 820, 210)        # user -> apps
+    arrow(1135, 300, 1135, 430)      # apps -> flows
+    arrow(1135, 630, 1135, 760)      # flows -> dataverse
+    arrow(700, 870, 820, 870)        # sharepoint -> dataverse
+    arrow(1450, 530, 1550, 530)      # flows -> external
+    arrow(1450, 870, 1550, 870)      # dataverse -> openai
+    arrow(1450, 210, 1550, 210)      # apps -> powerbi
 
-    # Title
-    draw.text((80, 20), "High-Level Architecture", fill="black", font=font_b)
+    # Title (bigger)
+    draw.text((120, 35), "High-Level Architecture", fill="black", font=font_b)
 
     buf = io.BytesIO()
     img.save(buf, format="PNG")
